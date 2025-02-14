@@ -3,188 +3,158 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const port = 3000;
 
-// Initialize SQLite database
-const db = new sqlite3.Database('./BD4_Assignment2/database.sqlite');
-
-// Middleware to parse JSON
-app.use(express.json());
+// Database connection
+const db = new sqlite3.Database('./database.sqlite', (err) => {
+  if (err) {
+    console.error('Error connecting to database:', err);
+    return;
+  }
+  console.log('Connected to SQLite database');
+});
 
 // Exercise 1: Get All Games
 app.get('/games', (req, res) => {
-  const query = 'SELECT * FROM games';
-  db.all(query, [], (err, rows) => {
+  db.all('SELECT * FROM games', [], (err, games) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ games: rows });
+    res.json({ games });
   });
 });
 
 // Exercise 2: Get Game by ID
 app.get('/games/details/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'SELECT * FROM games WHERE id = ?';
-  db.get(query, [id], (err, row) => {
+  db.get('SELECT * FROM games WHERE id = ?', [req.params.id], (err, game) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    if (!row) {
-      res.status(404).json({ error: 'Game not found' });
-      return;
-    }
-    res.json({ game: row });
+    res.json({ game });
   });
 });
 
 // Exercise 3: Get Games by Genre
 app.get('/games/genre/:genre', (req, res) => {
-  const { genre } = req.params;
-  const query = 'SELECT * FROM games WHERE genre = ?';
-  db.all(query, [genre], (err, rows) => {
+  db.all('SELECT * FROM games WHERE genre = ?', [req.params.genre], (err, games) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ games: rows });
+    res.json({ games });
   });
 });
 
 // Exercise 4: Get Games by Platform
 app.get('/games/platform/:platform', (req, res) => {
-  const { platform } = req.params;
-  const query = 'SELECT * FROM games WHERE platform = ?';
-  db.all(query, [platform], (err, rows) => {
+  db.all('SELECT * FROM games WHERE platform = ?', [req.params.platform], (err, games) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ games: rows });
+    res.json({ games });
   });
 });
 
 // Exercise 5: Get Games Sorted by Rating
 app.get('/games/sort-by-rating', (req, res) => {
-  const query = 'SELECT * FROM games ORDER BY rating DESC';
-  db.all(query, [], (err, rows) => {
+  db.all('SELECT * FROM games ORDER BY rating DESC', [], (err, games) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ games: rows });
+    res.json({ games });
   });
 });
 
 // Exercise 6: Get All Players
 app.get('/players', (req, res) => {
-  const query = 'SELECT * FROM players';
-  db.all(query, [], (err, rows) => {
+  db.all('SELECT * FROM players', [], (err, players) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ players: rows });
+    res.json({ players });
   });
 });
 
 // Exercise 7: Get Player by ID
 app.get('/players/details/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'SELECT * FROM players WHERE id = ?';
-  db.get(query, [id], (err, row) => {
+  db.get('SELECT * FROM players WHERE id = ?', [req.params.id], (err, player) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    if (!row) {
-      res.status(404).json({ error: 'Player not found' });
-      return;
-    }
-    res.json({ player: row });
+    res.json({ player });
   });
 });
 
 // Exercise 8: Get Players by Platform
 app.get('/players/platform/:platform', (req, res) => {
-  const { platform } = req.params;
-  const query = 'SELECT * FROM players WHERE platform = ?';
-  db.all(query, [platform], (err, rows) => {
+  db.all('SELECT * FROM players WHERE platform = ?', [req.params.platform], (err, players) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ players: rows });
+    res.json({ players });
   });
 });
 
 // Exercise 9: Get Players Sorted by Rating
 app.get('/players/sort-by-rating', (req, res) => {
-  const query = 'SELECT * FROM players ORDER BY rating DESC';
-  db.all(query, [], (err, rows) => {
+  db.all('SELECT * FROM players ORDER BY rating DESC', [], (err, players) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ players: rows });
+    res.json({ players });
   });
 });
 
 // Exercise 10: Get All Tournaments
 app.get('/tournaments', (req, res) => {
-  const query = 'SELECT * FROM tournaments';
-  db.all(query, [], (err, rows) => {
+  db.all('SELECT * FROM tournaments', [], (err, tournaments) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ tournaments: rows });
+    res.json({ tournaments });
   });
 });
 
 // Exercise 11: Get Tournament by ID
 app.get('/tournaments/details/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'SELECT * FROM tournaments WHERE id = ?';
-  db.get(query, [id], (err, row) => {
+  db.get('SELECT * FROM tournaments WHERE id = ?', [req.params.id], (err, tournament) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    if (!row) {
-      res.status(404).json({ error: 'Tournament not found' });
-      return;
-    }
-    res.json({ tournament: row });
+    res.json({ tournament });
   });
 });
 
 // Exercise 12: Get Tournaments by Game ID
 app.get('/tournaments/game/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'SELECT * FROM tournaments WHERE gameId = ?';
-  db.all(query, [id], (err, rows) => {
+  db.all('SELECT * FROM tournaments WHERE gameId = ?', [req.params.id], (err, tournaments) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ tournaments: rows });
+    res.json({ tournaments });
   });
 });
 
 // Exercise 13: Get Tournaments Sorted by Prize Pool
 app.get('/tournaments/sort-by-prize-pool', (req, res) => {
-  const query = 'SELECT * FROM tournaments ORDER BY prizePool DESC';
-  db.all(query, [], (err, rows) => {
+  db.all('SELECT * FROM tournaments ORDER BY prizePool DESC', [], (err, tournaments) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json({ tournaments: rows });
+    res.json({ tournaments });
   });
 });
 
-// Start server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
